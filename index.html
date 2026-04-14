@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ingressy Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f7f7f7;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    .card {
+      background: white;
+      padding: 16px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .row:last-child {
+      border-bottom: none;
+    }
+    .small {
+      color: #666;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Ingressy Dashboard</h1>
+
+<div class="card">
+  <h2>AI Traffic by Source</h2>
+  <div id="stats"></div>
+</div>
+
+<div class="card">
+  <h2>Top Pages</h2>
+  <div id="pages"></div>
+</div>
+
+<div class="card">
+  <h2>Recent Visits</h2>
+  <div id="recent"></div>
+</div>
+
+<script>
+  fetch("https://ingressy.pulkit-288.workers.dev/dashboard-data?siteId=pulkit-journal")
+    .then(res => res.json())
+    .then(data => {
+      
+      // Stats
+      const statsEl = document.getElementById("stats");
+      data.stats.forEach(item => {
+        const row = document.createElement("div");
+        row.className = "row";
+        row.innerHTML = `<span>${item.source}</span><span>${item.count}</span>`;
+        statsEl.appendChild(row);
+      });
+
+      // Top pages
+      const pagesEl = document.getElementById("pages");
+      data.topPages.forEach(item => {
+        const row = document.createElement("div");
+        row.className = "row";
+        row.innerHTML = `<span>${item.title}</span><span>${item.count}</span>`;
+        pagesEl.appendChild(row);
+      });
+
+      // Recent
+      const recentEl = document.getElementById("recent");
+      data.recent.forEach(item => {
+        const row = document.createElement("div");
+        row.className = "row";
+        row.innerHTML = `
+          <div>
+            <strong>${item.source}</strong><br/>
+            <span class="small">${item.path}</span>
+          </div>
+          <div class="small">${new Date(item.timestamp).toLocaleTimeString()}</div>
+        `;
+        recentEl.appendChild(row);
+      });
+
+    });
+</script>
+
+</body>
+</html>
