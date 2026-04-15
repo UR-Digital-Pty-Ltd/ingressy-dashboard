@@ -60,6 +60,7 @@ const siteId = params.get("siteId");
 fetch(`https://api.ingressy.com/dashboard-data?siteId=${siteId}`)
     .then(res => res.json())
     .then(data => {
+      console.log(data);
       
       // Stats
       const statsEl = document.getElementById("stats");
