@@ -50,6 +50,8 @@ await fetch("https://api.ingressy.com/register-site", {
 result.innerHTML = `
   <p>Site created for: ${website}</p>
   <p><strong>Site ID:</strong> ${data.siteId}</p>
+  <h2>✅ Installation ready</h2>
+  <p>Copy this script and paste it inside your website's &lt;head&gt; tag.</p>
   <pre><code>&lt;script async src="https://api.ingressy.com/script.js" data-site-id="${data.siteId}"&gt;&lt;/script&gt;</code></pre>
 `;
     } catch (error) {
