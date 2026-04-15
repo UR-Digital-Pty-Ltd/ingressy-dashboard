@@ -53,11 +53,20 @@ result.innerHTML = `
   <h2>✅ Installation ready</h2>
   <p>Copy this script and paste it inside your website's &lt;head&gt; tag.</p>
   <pre><code>&lt;script async src="https://api.ingressy.com/script.js" data-site-id="${data.siteId}"&gt;&lt;/script&gt;</code></pre>
+  <button id="copy-snippet">Copy Script</button>
 `;
     } catch (error) {
       result.innerHTML = "Something went wrong. Please try again.";
     }
   });
+  document.addEventListener("click", (e) => {
+  if (e.target.id === "copy-snippet") {
+    const code = document.querySelector("pre code").innerText;
+    navigator.clipboard.writeText(code);
+
+    e.target.innerText = "Copied!";
+  }
+});
 </script>
 </body>
 </html>
