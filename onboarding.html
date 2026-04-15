@@ -54,7 +54,7 @@ result.innerHTML = `
   <p>Copy this script and paste it inside your website's &lt;head&gt; tag.</p>
   <pre><code>&lt;script async src="https://api.ingressy.com/script.js" data-site-id="${data.siteId}"&gt;&lt;/script&gt;</code></pre>
   <button id="copy-snippet">Copy Script</button>
-  <a href="/index.html?siteId=${data.siteId}">Go to Dashboard →</a>
+  <a href="/?siteId=${data.siteId}">Go to Dashboard →</a>
 `;
     } catch (error) {
       result.innerHTML = "Something went wrong. Please try again.";
