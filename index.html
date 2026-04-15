@@ -61,6 +61,7 @@ fetch(`https://api.ingressy.com/dashboard-data?siteId=${siteId}`)
     .then(res => res.json())
     .then(data => {
       console.log(data);
+      if (!data.stats.length) document.getElementById("stats").innerHTML = "<p>No AI traffic yet.</p>";
       
       // Stats
       const statsEl = document.getElementById("stats");
