@@ -54,7 +54,10 @@
 </div>
 
 <script>
-  fetch("https://ingressy.pulkit-288.workers.dev/dashboard-data?siteId=pulkit-journal")
+  const params = new URLSearchParams(window.location.search);
+const siteId = params.get("siteId");
+
+fetch(`https://api.ingressy.com/dashboard-data?siteId=${siteId}`)
     .then(res => res.json())
     .then(data => {
       
