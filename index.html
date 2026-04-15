@@ -9,6 +9,9 @@
       background: #f7f7f7;
     }
     h1 {
+      margin-bottom: 10px;
+    }
+    .topbar {
       margin-bottom: 20px;
     }
     .card {
@@ -21,8 +24,9 @@
     .row {
       display: flex;
       justify-content: space-between;
-      padding: 6px 0;
+      padding: 8px 0;
       border-bottom: 1px solid #eee;
+      gap: 16px;
     }
     .row:last-child {
       border-bottom: none;
@@ -31,73 +35,112 @@
       color: #666;
       font-size: 12px;
     }
+    .muted {
+      color: #666;
+    }
+    a {
+      color: #0066cc;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
 
-<h1>Ingressy Dashboard</h1>
-  <a href="/onboarding.html">Add your site</a>
+  <h1>Ingressy Dashboard</h1>
+  <div class="topbar">
+    <a href="/onboarding.html">Add your site</a>
+  </div>
 
-<div class="card">
-  <h2>AI Traffic by Source</h2>
-  <div id="stats"></div>
-</div>
+  <div class="card">
+    <h2>AI Traffic by Source</h2>
+    <div id="stats"></div>
+  </div>
 
-<div class="card">
-  <h2>Top Pages</h2>
-  <div id="pages"></div>
-</div>
+  <div class="card">
+    <h2>Top Pages</h2>
+    <div id="pages"></div>
+  </div>
 
-<div class="card">
-  <h2>Recent Visits</h2>
-  <div id="recent"></div>
-</div>
+  <div class="card">
+    <h2>Recent Visits</h2>
+    <div id="recent"></div>
+  </div>
 
-<script>
-  const params = new URLSearchParams(window.location.search);
-const siteId = params.get("siteId");
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const siteId = params.get("siteId");
 
-fetch(`https://api.ingressy.com/dashboard-data?siteId=${siteId}`)
-    .then(res => res.json())
-    .then(data => {
-      console.log(data);
-      if (!data.stats.length) document.getElementById("stats").innerHTML = "<p>No AI traffic yet.</p>";
-      
-      // Stats
-      const statsEl = document.getElementById("stats");
-      data.stats.forEach(item => {
-        const row = document.createElement("div");
-        row.className = "row";
-        row.innerHTML = `<span>${item.source}</span><span>${item.count}</span>`;
-        statsEl.appendChild(row);
-      });
+    if (!siteId) {
+      document.getElementById("stats").innerHTML = "<p class='muted'>Missing siteId in URL.</p>";
+      document.getElementById("pages").innerHTML = "<p class='muted'>Missing siteId in URL.</p>";
+      document.getElementById("recent").innerHTML = "<p class='muted'>Missing siteId in URL.</p>";
+    } else {
+      fetch(`https://api.ingressy.com/dashboard-data?siteId=${siteId}`)
+        .then(res => res.json())
+        .then(data => {
+          console.log(data);
 
-      // Top pages
-      const pagesEl = document.getElementById("pages");
-      data.topPages.forEach(item => {
-        const row = document.createElement("div");
-        row.className = "row";
-        row.innerHTML = `<span>${item.title}</span><span>${item.count}</span>`;
-        pagesEl.appendChild(row);
-      });
+          const statsEl = document.getElementById("stats");
+          const pagesEl = document.getElementById("pages");
+          const recentEl = document.getElementById("recent");
 
-      // Recent
-      const recentEl = document.getElementById("recent");
-      data.recent.forEach(item => {
-        const row = document.createElement("div");
-        row.className = "row";
-        row.innerHTML = `
-          <div>
-            <strong>${item.source}</strong><br/>
-            <span class="small">${item.path}</span>
-          </div>
-          <div class="small">${new Date(item.timestamp).toLocaleTimeString()}</div>
-        `;
-        recentEl.appendChild(row);
-      });
+          if (!data.ok) {
+            statsEl.innerHTML = "<p class='muted'>Could not load dashboard data.</p>";
+            pagesEl.innerHTML = "<p class='muted'>Could not load dashboard data.</p>";
+            recentEl.innerHTML = "<p class='muted'>Could not load dashboard data.</p>";
+            return;
+          }
 
-    });
-</script>
+          if (!data.stats || !data.stats.length) {
+            statsEl.innerHTML = "<p class='muted'>No AI traffic yet.</p>";
+          } else {
+            data.stats.forEach(item => {
+              const row = document.createElement("div");
+              row.className = "row";
+              row.innerHTML = `<span>${item.source}</span><span>${item.count}</span>`;
+              statsEl.appendChild(row);
+            });
+          }
+
+          if (!data.topPages || !data.topPages.length) {
+            pagesEl.innerHTML = "<p class='muted'>No pages yet.</p>";
+          } else {
+            data.topPages.forEach(item => {
+              const row = document.createElement("div");
+              row.className = "row";
+              row.innerHTML = `<span>${item.title || item.path || "(untitled page)"}</span><span>${item.count}</span>`;
+              pagesEl.appendChild(row);
+            });
+          }
+
+          if (!data.recent || !data.recent.length) {
+            recentEl.innerHTML = "<p class='muted'>No visits yet.</p>";
+          } else {
+            data.recent.forEach(item => {
+              const row = document.createElement("div");
+              row.className = "row";
+              row.innerHTML = `
+                <div>
+                  <strong>${item.source}</strong><br/>
+                  <span class="small">${item.path || "/"}</span>
+                </div>
+                <div class="small">${new Date(item.timestamp).toLocaleString()}</div>
+              `;
+              recentEl.appendChild(row);
+            });
+          }
+        })
+        .catch(error => {
+          console.error(error);
+          document.getElementById("stats").innerHTML = "<p class='muted'>Failed to load stats.</p>";
+          document.getElementById("pages").innerHTML = "<p class='muted'>Failed to load pages.</p>";
+          document.getElementById("recent").innerHTML = "<p class='muted'>Failed to load recent visits.</p>";
+        });
+    }
+  </script>
 
 </body>
 </html>
