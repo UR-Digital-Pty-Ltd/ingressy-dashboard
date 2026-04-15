@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ingressy Onboarding</title>
+</head>
+<body>
+  <h1>Add your site</h1>
+  <p>Enter your website to generate your install script.</p>
+
+  <form id="site-form">
+    <input
+      type="url"
+      id="website"
+      name="website"
+      placeholder="https://example.com"
+      required
+    />
+    <button type="submit">Create Site</button>
+  </form>
+
+  <div id="result"></div>
+
+  <script>
+    const form = document.getElementById("site-form");
+    const result = document.getElementById("result");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      result.innerHTML = "Creating site...";
+
+      const website = document.getElementById("website").value;
+
+      result.innerHTML = `
+        <p>Site created for: ${website}</p>
+        <pre><code>&lt;script async src="https://api.ingressy.com/script.js" data-site-id="demo-site-id"&gt;&lt;/script&gt;</code></pre>
+      `;
+    });
+  </script>
+</body>
+</html>
