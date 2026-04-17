@@ -56,6 +56,11 @@
   </div>
 
   <div class="card">
+  <h2>Your Sites</h2>
+  <div id="sites"></div>
+</div>
+
+  <div class="card">
     <h2>AI Traffic by Source</h2>
     <div id="stats"></div>
   </div>
@@ -73,6 +78,29 @@
   <script>
     const params = new URLSearchParams(window.location.search);
     const siteId = params.get("siteId");
+    const sitesEl = document.getElementById("sites");
+
+    fetch("https://api.ingressy.com/sites")
+  .then(res => res.json())
+  .then(data => {
+    if (!data.sites || !data.sites.length) {
+      sitesEl.innerHTML = "<p class='muted'>No sites yet.</p>";
+      return;
+    }
+
+    data.sites.forEach(site => {
+      const row = document.createElement("div");
+      row.className = "row";
+      row.innerHTML = `
+        <span>${site.domain}</span>
+        <a href="/?siteId=${site.site_id}">Open</a>
+      `;
+      sitesEl.appendChild(row);
+    });
+  })
+  .catch(() => {
+    sitesEl.innerHTML = "<p class='muted'>Failed to load sites.</p>";
+  });
 
     if (!siteId) {
       document.getElementById("stats").innerHTML = "<p class='muted'>Missing siteId in URL.</p>";
