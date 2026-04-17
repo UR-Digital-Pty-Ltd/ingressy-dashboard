@@ -34,19 +34,17 @@
     const cleanDomain = website.replace(/^https?:\/\//, "").replace(/\/$/, "");
 
     try {
-      const response = await fetch("https://api.ingressy.com/create-site");
-const data = await response.json();
-
-await fetch("https://api.ingressy.com/register-site", {
+      const response = await fetch("https://api.ingressy.com/create-site", {
   method: "POST",
   headers: {
     "Content-Type": "application/json"
   },
   body: JSON.stringify({
-    siteId: data.siteId,
     domain: cleanDomain
   })
 });
+
+const data = await response.json();
 
 result.innerHTML = `
   <p>Site created for: ${website}</p>
