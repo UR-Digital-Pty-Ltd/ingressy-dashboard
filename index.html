@@ -58,6 +58,10 @@
       text-decoration: none;
       opacity: 0.9;
     }
+    .active-row {
+  background: #f0f7ff;
+  border-radius: 6px;
+}
   </style>
 </head>
 <body>
@@ -114,13 +118,27 @@
           return;
         }
 
+        if (!siteId && data.sites.length > 0) {
+  window.location.href = `/?siteId=${data.sites[0].site_id}`;
+  return;
+}
+
+        sitesEl.innerHTML = "";
         data.sites.forEach(site => {
           const row = document.createElement("div");
           row.className = "row";
-          row.innerHTML = `
-            <span><strong>${site.domain}</strong></span>
-            <a class="button-link" href="/?siteId=${site.site_id}">Open</a>
-          `;
+          const isActive = site.site_id === siteId;
+          if (isActive) {
+  row.classList.add("active-row");
+}
+
+row.innerHTML = `
+  <span>
+    <strong>${site.domain}</strong>
+    ${isActive ? '<span class="small">(active)</span>' : ''}
+  </span>
+  <a class="button-link" href="/?siteId=${site.site_id}">Open</a>
+`;
 
           if (site.site_id === siteId) {
             currentSiteEl.innerText = `Viewing site: ${site.domain}`;
